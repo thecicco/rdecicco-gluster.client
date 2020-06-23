@@ -1,0 +1,19 @@
+---
+
+- name: Add Gluster repo
+  apt_repository: 
+    repo: "ppa:gluster/glusterfs-7"
+
+- name: Update repositories cache and install gluster-client package
+  apt:
+    name: glusterfs-client
+    update_cache: yes
+
+- name: Create mount directory
+  file:
+    path: "{{ glusterfs_client_mount }}"
+    state: directory
+
+- name: Mount GlusterFS
+  mount: name="{{ glusterfs_client_mount }}" src="{{ glusterfs_server_primary }}:/{{ glusterfs_volume_name }}" fstype=glusterfs opts="acl,backupvolfile-server={{ glusterfs_server_secondary }},fetch-attempts=2,log-level=WARNING,log-file=/var/log/gluster.log,oom-score-adj=-20" state=mounted
+
